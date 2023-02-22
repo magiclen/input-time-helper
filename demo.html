@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=UTF-8>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <script src="https://cdn.jsdelivr.net/gh/magiclen/input-time-helper/dist/input-time-helper.min.js"></script> -->
+    <script src="./dist/input-time-helper.min.js"></script>
+    <title>input-time-helper</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="p-3 p-lg-5">
+    <div id="demo-input-time-helper" class="container">
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        Confusing Input (input[type="datetime-local"])
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12">
+                                <input type="datetime-local" id="confusion" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="number" id="confusion-timestamp" class="form-control is-invalid"
+                                        placeholder="timestamp" step="1">
+                                    <label for="confusion-timestamp">timestamp</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" id="confusion-locale-string" class="form-control is-invalid"
+                                        placeholder="locale string" readonly>
+                                    <label for="confusion-locale-string">locale string</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        input[type="date"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12">
+                                <input type="date" id="date" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="number" id="date-timestamp" class="form-control"
+                                        placeholder="timestamp" step="1">
+                                    <label for="date-timestamp">timestamp</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" id="date-locale-string" class="form-control"
+                                        placeholder="locale string" readonly>
+                                    <label for="date-locale-string">locale string</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        input[type="datetime-local"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12">
+                                <input type="datetime-local" id="datetime" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-check-inline">
+                                    <input id="datetime-unit-minute" class="form-check-input" type="radio"
+                                        name="datetime-unit" value="minute" checked>
+                                    <label class="form-check-label" for="datetime-unit-minute">Minute</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input id="datetime-unit-second" class="form-check-input" type="radio"
+                                        name="datetime-unit" value="second">
+                                    <label class="form-check-label" for="datetime-unit-second">Second</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input id="datetime-unit-millisecond" class="form-check-input" type="radio"
+                                        name="datetime-unit" value="millisecond">
+                                    <label class="form-check-label" for="datetime-unit-millisecond">Millisecond</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="number" id="datetime-timestamp" class="form-control"
+                                        placeholder="timestamp" step="1">
+                                    <label for="datetime-timestamp">timestamp</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" id="datetime-locale-string" class="form-control"
+                                        placeholder="locale string" readonly>
+                                    <label for="datetime-locale-string">locale string</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const inputConfusion = document.getElementById("confusion");
+        const inputConfusionTimestamp = document.getElementById("confusion-timestamp");
+        const inputConfusionLocaleString = document.getElementById("confusion-locale-string");
+
+        inputConfusion.addEventListener("input", () => {
+            const timestamp = inputConfusion.valueAsNumber;
+
+            inputConfusionTimestamp.value = timestamp.toString();
+
+            inputConfusionLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+        inputConfusionTimestamp.addEventListener("input", () => {
+            const timestamp = parseInt(inputConfusionTimestamp.value);
+
+            inputConfusion.valueAsNumber = timestamp;
+
+            inputConfusionLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+        
+        const inputDate = document.getElementById("date");
+        const inputDateTimestamp = document.getElementById("date-timestamp");
+        const inputDateLocaleString = document.getElementById("date-locale-string");
+
+        inputDate.addEventListener("input", () => {
+            const timestamp = InputTimeHelper.getTimestamp(inputDate);
+
+            inputDateTimestamp.value = timestamp.toString();
+
+            inputDateLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+        inputDateTimestamp.addEventListener("input", () => {
+            const timestamp = parseInt(inputDateTimestamp.value);
+
+            InputTimeHelper.setTimestampDate(inputDate, timestamp);
+
+            inputDateLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+
+        const inputDatetime = document.getElementById("datetime");
+        const inputDatetimeTimestamp = document.getElementById("datetime-timestamp");
+        const inputDatetimeLocaleString = document.getElementById("datetime-locale-string");
+        const inputDatetimeUnit = () => document.querySelector("input[name='datetime-unit']:checked");
+
+        inputDatetime.addEventListener("input", () => {
+            const timestamp = InputTimeHelper.getTimestamp(inputDatetime);
+
+            inputDatetimeTimestamp.value = timestamp.toString();
+
+            inputDatetimeLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+        inputDatetimeTimestamp.addEventListener("input", () => {
+            const timestamp = parseInt(inputDatetimeTimestamp.value);
+
+            InputTimeHelper.setTimestampDateTime(inputDatetime, timestamp);
+
+            inputDatetimeLocaleString.value = new Date(timestamp).toLocaleString();
+        });
+
+        for (const e of document.querySelectorAll("input[name='datetime-unit']")) {
+            e.addEventListener("change", () => {
+                switch (inputDatetimeUnit().value) {
+                    case "minute":
+                        inputDatetime.step = InputTimeHelper.TimeUnit.Minute;
+                        break;
+                    case "second":
+                        inputDatetime.step = InputTimeHelper.TimeUnit.Second;
+                        break;
+                    default: // case "millisecond":
+                        inputDatetime.step = InputTimeHelper.TimeUnit.Millisecond;
+                        break;
+                }
+
+                inputDatetimeTimestamp.dispatchEvent(new CustomEvent("input"));
+                inputDatetime.dispatchEvent(new CustomEvent("input"));
+            });
+        }
+    </script>
+</body>
+
+</html>
