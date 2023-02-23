@@ -18,6 +18,8 @@ const date = element.valueAsDate;
 console.log(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
 ```
 
+Moreover, the `value`/`min`/`max` attributes of these kinds of elements are formatted in specific patterns. We need to format our data into strings.
+
 ## Usage for Browsers
 
 [Source](demo.html)

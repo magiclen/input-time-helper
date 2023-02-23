@@ -50,6 +50,18 @@
                     </div>
                     <div class="card-body">
                         <div class="row g-3 align-items-center">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating">
+                                    <input type="date" id="date-from" class="form-control">
+                                    <label for="date-from">from</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating">
+                                    <input type="date" id="date-to" class="form-control">
+                                    <label for="date-to">to</label>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <input type="date" id="date" class="form-control">
                             </div>
@@ -78,6 +90,18 @@
                     </div>
                     <div class="card-body">
                         <div class="row g-3 align-items-center">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating">
+                                    <input type="datetime-local" id="datetime-from" class="form-control">
+                                    <label for="datetime-from">from</label>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-floating">
+                                    <input type="datetime-local" id="datetime-to" class="form-control">
+                                    <label for="datetime-to">to</label>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <input type="datetime-local" id="datetime" class="form-control">
                             </div>
@@ -141,9 +165,33 @@
         });
 
         
+        const inputDateFrom = document.getElementById("date-from");
+        const inputDateTo = document.getElementById("date-to");
         const inputDate = document.getElementById("date");
         const inputDateTimestamp = document.getElementById("date-timestamp");
         const inputDateLocaleString = document.getElementById("date-locale-string");
+
+        inputDateFrom.addEventListener("input", () => {
+            // we can just use `.value`, but this is a demo
+
+            const timestamp = InputTimeHelper.getTimestamp(inputDateFrom);
+
+            const dateString = InputTimeHelper.formatDateToDateString(timestamp);
+
+            inputDateTo.min = dateString;
+            inputDate.min = dateString;
+        });
+
+        inputDateTo.addEventListener("input", () => {
+            // we can just use `.value`, but this is a demo
+
+            const timestamp = InputTimeHelper.getTimestamp(inputDateTo);
+
+            const dateString = InputTimeHelper.formatDateToDateString(timestamp);
+
+            inputDateFrom.max = dateString;
+            inputDate.max = dateString;
+        });
 
         inputDate.addEventListener("input", () => {
             const timestamp = InputTimeHelper.getTimestamp(inputDate);
@@ -161,11 +209,34 @@
             inputDateLocaleString.value = new Date(timestamp).toLocaleString();
         });
 
-
+        const inputDatetimeFrom = document.getElementById("datetime-from");
+        const inputDatetimeTo = document.getElementById("datetime-to");
         const inputDatetime = document.getElementById("datetime");
         const inputDatetimeTimestamp = document.getElementById("datetime-timestamp");
         const inputDatetimeLocaleString = document.getElementById("datetime-locale-string");
         const inputDatetimeUnit = () => document.querySelector("input[name='datetime-unit']:checked");
+
+        inputDatetimeFrom.addEventListener("input", () => {
+            // we can just use `.value`, but this is a demo
+
+            const timestamp = InputTimeHelper.getTimestamp(inputDatetimeFrom);
+
+            const datetimeString = InputTimeHelper.formatDateToDatetimeString(timestamp);
+
+            inputDatetimeTo.min = datetimeString;
+            inputDatetime.min = datetimeString;
+        });
+
+        inputDatetimeTo.addEventListener("input", () => {
+            // we can just use `.value`, but this is a demo
+
+            const timestamp = InputTimeHelper.getTimestamp(inputDatetimeTo);
+
+            const datetimeString = InputTimeHelper.formatDateToDatetimeString(timestamp);
+
+            inputDatetimeFrom.max = datetimeString;
+            inputDatetime.max = datetimeString;
+        });
 
         inputDatetime.addEventListener("input", () => {
             const timestamp = InputTimeHelper.getTimestamp(inputDatetime);
