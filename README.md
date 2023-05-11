@@ -20,6 +20,35 @@ console.log(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
 
 Moreover, the `value`/`min`/`max` attributes of these kinds of elements are formatted in specific patterns. We need to format our data into strings.
 
+## Usage
+
+```typescript
+import {
+    formatDateToDateString,
+    formatDateToDatetimeString,
+    parseDateStringToDate,
+    parseDatetimeStringToDate,
+
+    getTimestamp,
+    setTimestampDate,
+    setTimestampDateTime,
+} from "input-time-helper";
+
+console.log(formatDateToDateString(new Date(2000, 1 - 1, 1))); // 2000-01-01
+console.log(formatDateToDatetimeString(new Date(2000, 1 - 1, 1))); // 2000-01-01T00:00
+console.log(parseDateStringToDate("2000-01-01"));
+console.log(parseDatetimeStringToDate("2000-01-01T00:00"));
+
+const myInputDate = document.getElementById("myInputDate");
+const myInputDatetimeLocal = document.getElementById("myInputDatetimeLocal");
+
+console.log(getTimestamp(myInputDate));
+console.log(getTimestamp(myInputDatetimeLocal));
+
+setTimestampDate(myInputDate, 946656000000);
+setTimestampDateTime(myInputDatetimeLocal, 946656000000);
+```
+
 ## Usage for Browsers
 
 [Source](demo.html)
