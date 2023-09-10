@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+
 const SECOND_IN_MILLISECONDS = 1000;
 const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS;
 
