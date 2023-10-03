@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
-
 const SECOND_IN_MILLISECONDS = 1000;
 const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS;
 
 const utcTimestampToLocalTimestamp = (timestamp: number): number => {
-    // eslint-disable-next-line no-extra-parens
     return timestamp + (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
 };
 
 const localTimestampToUtcTimestamp = (timestamp: number): number => {
-    // eslint-disable-next-line no-extra-parens
     return timestamp - (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
 };
 
@@ -71,8 +67,10 @@ export const setTimestampDateTime = (element: HTMLInputElement, timestamp: numbe
     const step = parseInt(element.step);
 
     if (!Number.isNaN(step)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         if (step >= TimeUnit.Minute) {
             t = Math.trunc(t / MINUTE_IN_MILLISECONDS) * MINUTE_IN_MILLISECONDS;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         } else if (step >= TimeUnit.Second) {
             t = Math.trunc(t / SECOND_IN_MILLISECONDS) * SECOND_IN_MILLISECONDS;
         }
