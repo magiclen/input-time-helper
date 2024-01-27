@@ -1,6 +1,8 @@
 import {
     formatDateToDateString,
     formatDateToDatetimeString,
+    formatDateToTimeString,
+    parseDateAndTimeStringToDate,
     parseDateStringToDate,
     parseDatetimeStringToDate,
 } from "../src/lib.js";
@@ -8,6 +10,12 @@ import {
 describe("formatDateToDateString", () => {
     it("ok", () => {
         expect(formatDateToDateString(new Date(2000, 1 - 1, 1))).toBe("2000-01-01");
+    });
+});
+
+describe("formatDateToTimeString", () => {
+    it("ok", () => {
+        expect(formatDateToTimeString(new Date(2000, 1 - 1, 1, 1))).toBe("01:00");
     });
 });
 
@@ -20,6 +28,12 @@ describe("formatDateToDatetimeString", () => {
 describe("parseDateStringToDate", () => {
     it("ok", () => {
         expect(parseDateStringToDate("2000-01-01")).toEqual(new Date(2000, 1 - 1, 1));
+    });
+});
+
+describe("parseDateAndTimeStringToDate", () => {
+    it("ok", () => {
+        expect(parseDateAndTimeStringToDate("2000-01-01", "01:00")).toEqual(new Date(2000, 1 - 1, 1, 1));
     });
 });
 

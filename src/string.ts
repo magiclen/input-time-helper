@@ -35,6 +35,42 @@ export const parseDateStringToDate = (dateString: string): Date => {
 };
 
 /**
+ * A time string can be used for the attrubutes of an `input[type="time"]` element such as `value`, `min`, `max`.
+ */
+export const formatDateToTimeString = (timestamp: number | Date): string => {
+    const date = getDateFromTimestamp(timestamp);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+    
+    const h = addLeadingZeros(date.getHours(), 2);
+    const min = addLeadingZeros(date.getMinutes(), 2);
+
+    let out = `${h}:${min}`;
+
+    const s = date.getSeconds();
+    const ms = date.getMilliseconds();
+
+    if (ms > 0 || s > 0) {
+        out += `:${addLeadingZeros(s, 2)}`;
+
+        if (ms > 0) {
+            out += `.${addLeadingZeros(ms, 3)}`;
+        }
+    }
+
+    return out;
+};
+
+/**
+ * A date string can be fetched from the attrubutes of an `input[type="date"]` element such as `value`, `min`, `max`. A time string can be fetched from the attrubutes of an `input[type="time"]` element such as `value`, `min`, `max`.
+ */
+export const parseDateAndTimeStringToDate = (dateString: string, timeString: string): Date => {
+    return new Date(`${dateString}T${timeString}`);
+};
+
+/**
  * A datetime string can be used for the attrubutes of an `input[type="datetime-local"]` element such as `value`, `min`, `max`.
  */
 export const formatDateToDatetimeString = (timestamp: number | Date): string => {
