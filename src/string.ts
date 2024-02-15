@@ -71,9 +71,9 @@ export const parseDateAndTimeStringToDate = (dateString: string, timeString: str
 };
 
 /**
- * A datetime string can be used for the attrubutes of an `input[type="datetime-local"]` element such as `value`, `min`, `max`.
+ * A datetime string can be used for the attrubutes of an `input[type="datetime-local"]` element such as `value`, `min`, `max`. The `splitter` parameter can be set to `" "` (a space) in order to format the datetime string for RDBMS SQL statements.
  */
-export const formatDateToDatetimeString = (timestamp: number | Date): string => {
+export const formatDateToDatetimeString = (timestamp: number | Date, splitter: "T" | " " = "T"): string => {
     const date = getDateFromTimestamp(timestamp);
 
     if (Number.isNaN(date.getTime())) {
@@ -86,7 +86,7 @@ export const formatDateToDatetimeString = (timestamp: number | Date): string => 
     const h = addLeadingZeros(date.getHours(), 2);
     const min = addLeadingZeros(date.getMinutes(), 2);
 
-    let out = `${y}-${m}-${d}T${h}:${min}`;
+    let out = `${y}-${m}-${d}${splitter}${h}:${min}`;
 
     const s = date.getSeconds();
     const ms = date.getMilliseconds();

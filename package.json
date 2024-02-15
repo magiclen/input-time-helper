@@ -1,6 +1,6 @@
 {
     "name": "input-time-helper",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "description": "Intuitively (by using local time) get/set the value of a date- or time-based HTML input element.",
     "type": "module",
     "exports": "./lib/lib.js",
