@@ -401,6 +401,15 @@
         "@typescript-eslint/no-var-requires": [
             "warn"
         ],
+        "@typescript-eslint/restrict-template-expressions": [
+            "error",
+            {
+                "allowBoolean": true,
+                "allowNullish": true,
+                "allowNumber": true,
+                "allowRegExp": true
+            }
+        ],
         "import/no-empty-named-blocks": [
             "error"
         ],
@@ -437,12 +446,6 @@
         ],
         "import/no-self-import": [
             "error"
-        ],
-        "import/no-useless-path-segments": [
-            "error",
-            {
-                "noUselessIndex": true
-            }
         ],
         "import/consistent-type-specifier-style": [
             "error",
