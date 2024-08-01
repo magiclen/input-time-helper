@@ -1,6 +1,7 @@
 import {
     formatDateToDateString,
     formatDateToDatetimeString,
+    formatDateToLocalISOString,
     formatDateToTimeString,
     parseDateAndTimeStringToDate,
     parseDateStringToDate,
@@ -40,5 +41,13 @@ describe("parseDateAndTimeStringToDate", () => {
 describe("parseDatetimeStringToDate", () => {
     it("ok", () => {
         expect(parseDatetimeStringToDate("2000-01-01T00:00")).toEqual(new Date(2000, 1 - 1, 1));
+    });
+});
+
+describe("toLocalISOString", () => {
+    it("ok", () => {
+        const date = new Date();
+
+        expect(new Date(formatDateToLocalISOString(date))).toEqual(date);
     });
 });

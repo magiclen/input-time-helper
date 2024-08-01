@@ -19,7 +19,7 @@ export const formatDateToDateString = (timestamp: number | Date): string => {
     if (Number.isNaN(date.getTime())) {
         return "";
     }
-    
+
     const y = addLeadingZeros(date.getFullYear(), 4);
     const m = addLeadingZeros(date.getMonth() + 1, 2);
     const d = addLeadingZeros(date.getDate(), 2);
@@ -43,7 +43,7 @@ export const formatDateToTimeString = (timestamp: number | Date): string => {
     if (Number.isNaN(date.getTime())) {
         return "";
     }
-    
+
     const h = addLeadingZeros(date.getHours(), 2);
     const min = addLeadingZeros(date.getMinutes(), 2);
 
@@ -79,7 +79,7 @@ export const formatDateToDatetimeString = (timestamp: number | Date, splitter: "
     if (Number.isNaN(date.getTime())) {
         return "";
     }
-    
+
     const y = addLeadingZeros(date.getFullYear(), 4);
     const m = addLeadingZeros(date.getMonth() + 1, 2);
     const d = addLeadingZeros(date.getDate(), 2);
@@ -107,4 +107,68 @@ export const formatDateToDatetimeString = (timestamp: number | Date, splitter: "
  */
 export const parseDatetimeStringToDate = (datetimeString: string): Date => {
     return new Date(datetimeString);
+};
+
+export interface ToLocalISOStringOptions {
+    /**
+     * Whether to ignore milliseconds.
+     *
+     * @default false
+     */
+    ignoreMilliseconds?: boolean,
+}
+
+/**
+ * A date string can be used for `new Date(string)`. It uses the local time zone instead of UTC.
+ */
+export const formatDateToLocalISOString = (timestamp: number | Date, options: ToLocalISOStringOptions = {}): string => {
+    const date = getDateFromTimestamp(timestamp);
+
+    try {
+        return toLocalISOString(date, options);
+    } catch (error) {
+        return "";
+    }
+};
+
+/**
+ * Returns a date as a string value in ISO format (RFC3339) with the local time zone.
+ *
+ * @throws {RangeError} Invalid time value
+ */
+export const toLocalISOString = (date: Date, options: ToLocalISOStringOptions = {}): string => {
+    if (Number.isNaN(date.getTime())) {
+        throw new RangeError("Invalid time value");
+    }
+
+    const y = addLeadingZeros(date.getFullYear(), 4);
+    const m = addLeadingZeros(date.getMonth() + 1, 2);
+    const d = addLeadingZeros(date.getDate(), 2);
+    const h = addLeadingZeros(date.getHours(), 2);
+    const min = addLeadingZeros(date.getMinutes(), 2);
+    const s = addLeadingZeros(date.getSeconds(), 2);
+
+    let out = `${y}-${m}-${d}T${h}:${min}:${s}`;
+
+    if (options.ignoreMilliseconds !== true) {
+        const ms = date.getMilliseconds();
+
+        out += `.${addLeadingZeros(ms, 3)}`;
+    }
+
+    let timezoneOffset = date.getTimezoneOffset();
+
+    if (timezoneOffset <= 0) {
+        timezoneOffset = -timezoneOffset;
+        out += "+";
+    } else {
+        out += "-";
+    }
+
+    const tzM = addLeadingZeros(Math.trunc(timezoneOffset / 60), 2);
+    const tzS = addLeadingZeros(Math.trunc(timezoneOffset % 60), 2);
+
+    out += `${tzM}:${tzS}`;
+
+    return out;
 };
