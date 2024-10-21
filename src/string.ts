@@ -6,9 +6,7 @@ const getDateFromTimestamp = (date: number | Date): Date => {
     return new Date(date);
 };
 
-const addLeadingZeros = (n: number, maxLength: number): string => {
-    return n.toString().padStart(maxLength, "0");
-};
+const addLeadingZeros = (n: number, maxLength: number): string => n.toString().padStart(maxLength, "0");
 
 /**
  * A date string can be used for the attrubutes of an `input[type="date"]` element such as `value`, `min`, `max`.
@@ -30,9 +28,7 @@ export const formatDateToDateString = (timestamp: number | Date): string => {
 /**
  * A date string can be fetched from the attrubutes of an `input[type="date"]` element such as `value`, `min`, `max`.
  */
-export const parseDateStringToDate = (dateString: string): Date => {
-    return new Date(`${dateString}T00:00`);
-};
+export const parseDateStringToDate = (dateString: string): Date => new Date(`${dateString}T00:00`);
 
 /**
  * A time string can be used for the attrubutes of an `input[type="time"]` element such as `value`, `min`, `max`.
@@ -66,14 +62,18 @@ export const formatDateToTimeString = (timestamp: number | Date): string => {
 /**
  * A date string can be fetched from the attrubutes of an `input[type="date"]` element such as `value`, `min`, `max`. A time string can be fetched from the attrubutes of an `input[type="time"]` element such as `value`, `min`, `max`.
  */
-export const parseDateAndTimeStringToDate = (dateString: string, timeString: string): Date => {
-    return new Date(`${dateString}T${timeString}`);
-};
+export const parseDateAndTimeStringToDate = (
+    dateString: string,
+    timeString: string,
+): Date => new Date(`${dateString}T${timeString}`);
 
 /**
  * A datetime string can be used for the attrubutes of an `input[type="datetime-local"]` element such as `value`, `min`, `max`. The `splitter` parameter can be set to `" "` (a space) in order to format the datetime string for RDBMS SQL statements.
  */
-export const formatDateToDatetimeString = (timestamp: number | Date, splitter: "T" | " " = "T"): string => {
+export const formatDateToDatetimeString = (
+    timestamp: number | Date,
+    splitter: "T" | " " = "T",
+): string => {
     const date = getDateFromTimestamp(timestamp);
 
     if (Number.isNaN(date.getTime())) {
@@ -105,9 +105,7 @@ export const formatDateToDatetimeString = (timestamp: number | Date, splitter: "
 /**
  * A datetime string can be fetched from the attrubutes of an `input[type="datetime-local"]` element such as `value`, `min`, `max`.
  */
-export const parseDatetimeStringToDate = (datetimeString: string): Date => {
-    return new Date(datetimeString);
-};
+export const parseDatetimeStringToDate = (datetimeString: string): Date => new Date(datetimeString);
 
 export interface ToLocalISOStringOptions {
     /**
@@ -115,28 +113,18 @@ export interface ToLocalISOStringOptions {
      *
      * @default false
      */
-    ignoreMilliseconds?: boolean,
+    ignoreMilliseconds?: boolean;
 }
-
-/**
- * A date string can be used for `new Date(string)`. It uses the local time zone instead of UTC.
- */
-export const formatDateToLocalISOString = (timestamp: number | Date, options: ToLocalISOStringOptions = {}): string => {
-    const date = getDateFromTimestamp(timestamp);
-
-    try {
-        return toLocalISOString(date, options);
-    } catch (error) {
-        return "";
-    }
-};
 
 /**
  * Returns a date as a string value in ISO format (RFC3339) with the local time zone.
  *
  * @throws {RangeError} Invalid time value
  */
-export const toLocalISOString = (date: Date, options: ToLocalISOStringOptions = {}): string => {
+export const toLocalISOString = (
+    date: Date,
+    options: ToLocalISOStringOptions = {},
+): string => {
     if (Number.isNaN(date.getTime())) {
         throw new RangeError("Invalid time value");
     }
@@ -171,4 +159,20 @@ export const toLocalISOString = (date: Date, options: ToLocalISOStringOptions = 
     out += `${tzM}:${tzS}`;
 
     return out;
+};
+
+/**
+ * A date string can be used for `new Date(string)`. It uses the local time zone instead of UTC.
+ */
+export const formatDateToLocalISOString = (
+    timestamp: number | Date,
+    options: ToLocalISOStringOptions = {},
+): string => {
+    const date = getDateFromTimestamp(timestamp);
+
+    try {
+        return toLocalISOString(date, options);
+    } catch (_error) {
+        return "";
+    }
 };

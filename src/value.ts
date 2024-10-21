@@ -1,13 +1,9 @@
 const SECOND_IN_MILLISECONDS = 1000;
 const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS;
 
-const utcTimestampToLocalTimestamp = (timestamp: number): number => {
-    return timestamp + (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
-};
+const utcTimestampToLocalTimestamp = (timestamp: number): number => timestamp + (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
 
-const localTimestampToUtcTimestamp = (timestamp: number): number => {
-    return timestamp - (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
-};
+const localTimestampToUtcTimestamp = (timestamp: number): number => timestamp - (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
 
 const getTimestampFromDate = (date: number | Date): number => {
     if (date instanceof Date) {
@@ -23,7 +19,7 @@ const getTimestampFromDate = (date: number | Date): number => {
 export enum TimeUnit {
     Minute = 60,
     Second = 1,
-    Millisecond = 0.1
+    Millisecond = 0.1,
 }
 
 /**
@@ -42,7 +38,10 @@ export const getTimestamp = (element: HTMLInputElement): number => {
 /**
  * @param element the input type should be `date`
  */
-export const setTimestampDate = (element: HTMLInputElement, timestamp: number | Date) => {
+export const setTimestampDate = (
+    element: HTMLInputElement,
+    timestamp: number | Date,
+): void => {
     const t = getTimestampFromDate(timestamp);
 
     if (Number.isNaN(t)) {
@@ -56,7 +55,10 @@ export const setTimestampDate = (element: HTMLInputElement, timestamp: number | 
 /**
  * @param element the input type should be `datetime-local`
  */
-export const setTimestampDateTime = (element: HTMLInputElement, timestamp: number | Date) => {
+export const setTimestampDateTime = (
+    element: HTMLInputElement,
+    timestamp: number | Date,
+): void => {
     let t = getTimestampFromDate(timestamp);
 
     if (Number.isNaN(t)) {
@@ -70,11 +72,11 @@ export const setTimestampDateTime = (element: HTMLInputElement, timestamp: numbe
         // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         if (step >= TimeUnit.Minute) {
             t = Math.trunc(t / MINUTE_IN_MILLISECONDS) * MINUTE_IN_MILLISECONDS;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         } else if (step >= TimeUnit.Second) {
             t = Math.trunc(t / SECOND_IN_MILLISECONDS) * SECOND_IN_MILLISECONDS;
         }
     }
-    
+
     element.valueAsNumber = localTimestampToUtcTimestamp(t);
 };
