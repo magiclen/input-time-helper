@@ -26,6 +26,7 @@ Moreover, the `value`/`min`/`max` attributes of these kinds of elements are form
 import {
     formatDateToDateString,
     formatDateToDatetimeString,
+    formatDateToLocalISOString,
     parseDateStringToDate,
     parseDatetimeStringToDate,
 
@@ -36,6 +37,7 @@ import {
 
 console.log(formatDateToDateString(new Date(2000, 1 - 1, 1))); // 2000-01-01
 console.log(formatDateToDatetimeString(new Date(2000, 1 - 1, 1))); // 2000-01-01T00:00
+console.log(formatDateToLocalISOString(new Date(2000, 1 - 1, 1))); // 2000-01-01T00:00+08:00
 console.log(parseDateStringToDate("2000-01-01"));
 console.log(parseDatetimeStringToDate("2000-01-01T00:00"));
 
