@@ -118,8 +118,6 @@ export interface ToLocalISOStringOptions {
 
 /**
  * Formats the difference in minutes between Universal Coordinated Time (UTC) and the time on the local computer to the `[+-]HH:mm` format.
- *
- * @throws {RangeError} Invalid time value
  */
 export const formatTimezoneOffsetToString = (timezoneOffset: number): string => {
     let out = "";
