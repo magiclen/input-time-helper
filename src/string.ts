@@ -117,6 +117,29 @@ export interface ToLocalISOStringOptions {
 }
 
 /**
+ * Formats the difference in minutes between Universal Coordinated Time (UTC) and the time on the local computer to the `[+-]HH:mm` format.
+ *
+ * @throws {RangeError} Invalid time value
+ */
+export const formatTimezoneOffsetToString = (timezoneOffset: number): string => {
+    let out = "";
+
+    if (timezoneOffset <= 0) {
+        timezoneOffset = -timezoneOffset;
+        out += "+";
+    } else {
+        out += "-";
+    }
+
+    const tzM = addLeadingZeros(Math.trunc(timezoneOffset / 60), 2);
+    const tzS = addLeadingZeros(Math.trunc(timezoneOffset % 60), 2);
+
+    out += `${tzM}:${tzS}`;
+
+    return out;
+};
+
+/**
  * Returns a date as a string value in ISO format (RFC3339) with the local time zone.
  *
  * @throws {RangeError} Invalid time value
@@ -144,19 +167,7 @@ export const toLocalISOString = (
         out += `.${addLeadingZeros(ms, 3)}`;
     }
 
-    let timezoneOffset = date.getTimezoneOffset();
-
-    if (timezoneOffset <= 0) {
-        timezoneOffset = -timezoneOffset;
-        out += "+";
-    } else {
-        out += "-";
-    }
-
-    const tzM = addLeadingZeros(Math.trunc(timezoneOffset / 60), 2);
-    const tzS = addLeadingZeros(Math.trunc(timezoneOffset % 60), 2);
-
-    out += `${tzM}:${tzS}`;
+    out += formatTimezoneOffsetToString(date.getTimezoneOffset());
 
     return out;
 };

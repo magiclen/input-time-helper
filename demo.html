@@ -16,6 +16,9 @@
     <div id="demo-input-time-helper" class="container">
         <div class="row g-3">
             <div class="col-12">
+                Local Timezone: <span id="timezone"></span>
+            </div>
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         Confusing Input (input[type="datetime-local"])
@@ -144,6 +147,10 @@
     </div>
 
     <script>
+        const timezone = document.getElementById("timezone");
+
+        timezone.textContent = InputTimeHelper.formatTimezoneOffsetToString(new Date().getTimezoneOffset());
+
         const inputConfusion = document.getElementById("confusion");
         const inputConfusionTimestamp = document.getElementById("confusion-timestamp");
         const inputConfusionLocaleString = document.getElementById("confusion-locale-string");
