@@ -1,9 +1,11 @@
 const SECOND_IN_MILLISECONDS = 1000;
 const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS;
 
-const utcTimestampToLocalTimestamp = (timestamp: number): number => timestamp + (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
+const utcTimestampToLocalTimestamp = (timestamp: number): number =>
+    timestamp + new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS;
 
-const localTimestampToUtcTimestamp = (timestamp: number): number => timestamp - (new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS);
+const localTimestampToUtcTimestamp = (timestamp: number): number =>
+    timestamp - new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS;
 
 const getTimestampFromDate = (date: number | Date): number => {
     if (date instanceof Date) {
@@ -13,18 +15,14 @@ const getTimestampFromDate = (date: number | Date): number => {
     return date;
 };
 
-/**
- * The value can be used for the step attrbute of a time-based element.
- */
+/** The value can be used for the step attrbute of a time-based element. */
 export enum TimeUnit {
     Minute = 60,
     Second = 1,
     Millisecond = 0.1,
 }
 
-/**
- * @param element the input type should be `date` or `datetime-local`
- */
+/** @param element The input type should be `date` or `datetime-local` */
 export const getTimestamp = (element: HTMLInputElement): number => {
     const timestamp = element.valueAsNumber;
 
@@ -35,13 +33,8 @@ export const getTimestamp = (element: HTMLInputElement): number => {
     return utcTimestampToLocalTimestamp(timestamp);
 };
 
-/**
- * @param element the input type should be `date`
- */
-export const setTimestampDate = (
-    element: HTMLInputElement,
-    timestamp: number | Date,
-): void => {
+/** @param element The input type should be `date` */
+export const setTimestampDate = (element: HTMLInputElement, timestamp: number | Date): void => {
     const t = getTimestampFromDate(timestamp);
 
     if (Number.isNaN(t)) {
@@ -52,13 +45,8 @@ export const setTimestampDate = (
     element.valueAsNumber = localTimestampToUtcTimestamp(t);
 };
 
-/**
- * @param element the input type should be `datetime-local`
- */
-export const setTimestampDateTime = (
-    element: HTMLInputElement,
-    timestamp: number | Date,
-): void => {
+/** @param element The input type should be `datetime-local` */
+export const setTimestampDateTime = (element: HTMLInputElement, timestamp: number | Date): void => {
     let t = getTimestampFromDate(timestamp);
 
     if (Number.isNaN(t)) {
