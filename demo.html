@@ -110,6 +110,47 @@
                 </div>
                 <div class="col-12">
                     <div class="card">
+                        <div class="card-header">input[type="time"]</div>
+                        <div class="card-body">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-floating">
+                                        <input type="time" id="time-from" class="form-control" />
+                                        <label for="time-from">from</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <div class="form-floating">
+                                        <input type="time" id="time-to" class="form-control" />
+                                        <label for="time-to">to</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <input type="time" id="time" class="form-control" step="1" />
+                                </div>
+                                <div class="col-auto">
+                                    <button type="button" id="time-now" class="btn btn-primary">
+                                        Now
+                                    </button>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <input
+                                            type="text"
+                                            id="time-locale-string"
+                                            class="form-control"
+                                            placeholder="locale time string"
+                                            readonly
+                                        />
+                                        <label for="time-locale-string">locale time string</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card">
                         <div class="card-header">input[type="datetime-local"]</div>
                         <div class="card-body">
                             <div class="row g-3 align-items-center">
@@ -215,7 +256,7 @@
         <script>
             const timezone = document.getElementById("timezone");
 
-            timezone.textContent = InputTimeHelper.formatTimezoneOffsetToString(
+            timezone.textContent = InputTimeHelper.formatTimezoneOffset(
                 new Date().getTimezoneOffset(),
             );
 
@@ -248,9 +289,9 @@
             inputDateFrom.addEventListener("input", () => {
                 // we can just use `.value`, but this is a demo
 
-                const timestamp = InputTimeHelper.getTimestamp(inputDateFrom);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDateFrom);
 
-                const dateString = InputTimeHelper.formatDateToDateString(timestamp);
+                const dateString = date === null ? "" : InputTimeHelper.formatDate(date);
 
                 inputDateTo.min = dateString;
                 inputDate.min = dateString;
@@ -259,28 +300,69 @@
             inputDateTo.addEventListener("input", () => {
                 // we can just use `.value`, but this is a demo
 
-                const timestamp = InputTimeHelper.getTimestamp(inputDateTo);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDateTo);
 
-                const dateString = InputTimeHelper.formatDateToDateString(timestamp);
+                const dateString = date === null ? "" : InputTimeHelper.formatDate(date);
 
                 inputDateFrom.max = dateString;
                 inputDate.max = dateString;
             });
 
             inputDate.addEventListener("input", () => {
-                const timestamp = InputTimeHelper.getTimestamp(inputDate);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDate);
 
-                inputDateTimestamp.value = timestamp.toString();
+                inputDateTimestamp.value = date === null ? "" : date.getTime().toString();
 
-                inputDateLocaleString.value = new Date(timestamp).toLocaleString();
+                inputDateLocaleString.value = date === null ? "" : date.toLocaleString();
             });
 
             inputDateTimestamp.addEventListener("input", () => {
                 const timestamp = parseInt(inputDateTimestamp.value);
 
-                InputTimeHelper.setTimestampDate(inputDate, timestamp);
+                InputTimeHelper.setValueAsLocalDate(inputDate, timestamp);
 
                 inputDateLocaleString.value = new Date(timestamp).toLocaleString();
+            });
+
+            const inputTimeFrom = document.getElementById("time-from");
+            const inputTimeTo = document.getElementById("time-to");
+            const inputTime = document.getElementById("time");
+            const buttonTimeNow = document.getElementById("time-now");
+            const inputTimeLocaleString = document.getElementById("time-locale-string");
+
+            inputTimeFrom.addEventListener("input", () => {
+                // we can just use `.value`, but this is a demo
+
+                const date = InputTimeHelper.getValueAsLocalDate(inputTimeFrom);
+
+                const timeString = date === null ? "" : InputTimeHelper.formatTime(date);
+
+                inputTimeTo.min = timeString;
+                inputTime.min = timeString;
+            });
+
+            inputTimeTo.addEventListener("input", () => {
+                // we can just use `.value`, but this is a demo
+
+                const date = InputTimeHelper.getValueAsLocalDate(inputTimeTo);
+
+                const timeString = date === null ? "" : InputTimeHelper.formatTime(date);
+
+                inputTimeFrom.max = timeString;
+                inputTime.max = timeString;
+            });
+
+            inputTime.addEventListener("input", () => {
+                const date = InputTimeHelper.getValueAsLocalDate(inputTime);
+
+                inputTimeLocaleString.value = date === null ? "" : date.toLocaleTimeString();
+            });
+
+            buttonTimeNow.addEventListener("click", () => {
+                // the step is 1 second, so the milliseconds are rounded down
+                InputTimeHelper.setValueAsLocalDate(inputTime, new Date());
+
+                inputTime.dispatchEvent(new CustomEvent("input"));
             });
 
             const inputDatetimeFrom = document.getElementById("datetime-from");
@@ -294,9 +376,9 @@
             inputDatetimeFrom.addEventListener("input", () => {
                 // we can just use `.value`, but this is a demo
 
-                const timestamp = InputTimeHelper.getTimestamp(inputDatetimeFrom);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDatetimeFrom);
 
-                const datetimeString = InputTimeHelper.formatDateToDatetimeString(timestamp);
+                const datetimeString = date === null ? "" : InputTimeHelper.formatDatetime(date);
 
                 inputDatetimeTo.min = datetimeString;
                 inputDatetime.min = datetimeString;
@@ -305,26 +387,26 @@
             inputDatetimeTo.addEventListener("input", () => {
                 // we can just use `.value`, but this is a demo
 
-                const timestamp = InputTimeHelper.getTimestamp(inputDatetimeTo);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDatetimeTo);
 
-                const datetimeString = InputTimeHelper.formatDateToDatetimeString(timestamp);
+                const datetimeString = date === null ? "" : InputTimeHelper.formatDatetime(date);
 
                 inputDatetimeFrom.max = datetimeString;
                 inputDatetime.max = datetimeString;
             });
 
             inputDatetime.addEventListener("input", () => {
-                const timestamp = InputTimeHelper.getTimestamp(inputDatetime);
+                const date = InputTimeHelper.getValueAsLocalDate(inputDatetime);
 
-                inputDatetimeTimestamp.value = timestamp.toString();
+                inputDatetimeTimestamp.value = date === null ? "" : date.getTime().toString();
 
-                inputDatetimeLocaleString.value = new Date(timestamp).toLocaleString();
+                inputDatetimeLocaleString.value = date === null ? "" : date.toLocaleString();
             });
 
             inputDatetimeTimestamp.addEventListener("input", () => {
                 const timestamp = parseInt(inputDatetimeTimestamp.value);
 
-                InputTimeHelper.setTimestampDateTime(inputDatetime, timestamp);
+                InputTimeHelper.setValueAsLocalDate(inputDatetime, timestamp);
 
                 inputDatetimeLocaleString.value = new Date(timestamp).toLocaleString();
             });
