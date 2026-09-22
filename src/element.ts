@@ -1,70 +1,132 @@
-const SECOND_IN_MILLISECONDS = 1000;
-const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS;
+import {
+    formatDatetimeParts,
+    formatTimeParts,
+    getLocalParts,
+    partsToUTCTimestamp,
+    toValidDate,
+    utcTimestampToParts,
+} from "./date-parts.ts";
+import { formatDate, parseDate, parseDatetime, parseTime } from "./string.ts";
 
-const utcTimestampToLocalTimestamp = (timestamp: number): number =>
-    timestamp + new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS;
+/**
+ * The properties of an `input` element used by `getValueAsLocalDate` and `setValueAsLocalDate`. An
+ * `HTMLInputElement` can be passed directly.
+ */
+export type TimeInputElement = Pick<HTMLInputElement, "type" | "value" | "step">;
 
-const localTimestampToUtcTimestamp = (timestamp: number): number =>
-    timestamp - new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS;
+/**
+ * Common values in seconds for the `step` attribute of an `input[type="time"]` or
+ * `input[type="datetime-local"]` element.
+ */
+export const TimeUnit = {
+    Minute: 60,
+    Second: 1,
+    Millisecond: 0.001,
+} as const;
 
-const getTimestampFromDate = (date: number | Date): number => {
-    if (date instanceof Date) {
-        return date.getTime();
+/** A value of `TimeUnit`. */
+export type TimeUnit = (typeof TimeUnit)[keyof typeof TimeUnit];
+
+// The default step of `time` and `datetime-local` is 60 seconds.
+const DEFAULT_STEP_MILLISECONDS = 60_000;
+
+/** Returns `null` if the value should not be rounded. */
+const getStepMilliseconds = (step: string): number | null => {
+    if (step.toLowerCase() === "any") {
+        return null;
     }
 
-    return date;
+    const seconds = Number(step);
+
+    // An empty, zero, negative or invalid step falls back to the default step.
+    if (!(seconds > 0)) {
+        return DEFAULT_STEP_MILLISECONDS;
+    }
+
+    return Math.max(1, Math.round(seconds * 1000));
 };
 
-/** The value can be used for the step attrbute of a time-based element. */
-export enum TimeUnit {
-    Minute = 60,
-    Second = 1,
-    Millisecond = 0.1,
-}
+const createUnsupportedTypeError = (type: string): TypeError =>
+    new TypeError(
+        `The type of the input element must be "date", "time" or "datetime-local", but it is "${type}".`,
+    );
 
-/** @param element The input type should be `date` or `datetime-local` */
-export const getTimestamp = (element: HTMLInputElement): number => {
-    const timestamp = element.valueAsNumber;
+const formatSteppedValue = (
+    type: "time" | "datetime-local",
+    date: Date | number,
+    step: string,
+): string => {
+    const validDate = toValidDate(date);
 
-    if (Number.isNaN(timestamp)) {
-        return NaN;
+    if (validDate === null) {
+        return "";
     }
 
-    return utcTimestampToLocalTimestamp(timestamp);
+    let parts = getLocalParts(validDate);
+
+    // The step base of `time` is midnight, so only the time of the day matters.
+    if (type === "time") {
+        parts = { ...parts, year: 1970, month: 1, day: 1 };
+    }
+
+    const stepMilliseconds = getStepMilliseconds(step);
+
+    if (stepMilliseconds !== null) {
+        const timestamp = partsToUTCTimestamp(parts);
+
+        parts = utcTimestampToParts(Math.floor(timestamp / stepMilliseconds) * stepMilliseconds);
+    }
+
+    return type === "time" ? formatTimeParts(parts) : formatDatetimeParts(parts);
 };
 
-/** @param element The input type should be `date` */
-export const setTimestampDate = (element: HTMLInputElement, timestamp: number | Date): void => {
-    const t = getTimestampFromDate(timestamp);
+/**
+ * Gets the value of an `input[type="date"]`, `input[type="time"]` or `input[type="datetime-local"]`
+ * element as a date in local time. For `date`, the time is midnight. For `time`, the date part is
+ * 1970-01-01.
+ *
+ * @returns `null` if the value is empty or invalid.
+ * @throws {TypeError} If the type of the element is not supported.
+ */
+export const getValueAsLocalDate = (element: TimeInputElement): Date | null => {
+    const { type, value } = element;
 
-    if (Number.isNaN(t)) {
-        element.valueAsNumber = NaN;
-        return;
+    switch (type) {
+        case "date":
+            return parseDate(value);
+        case "time":
+            return parseTime(value);
+        case "datetime-local":
+            return parseDatetime(value);
+        default:
+            throw createUnsupportedTypeError(type);
     }
-
-    element.valueAsNumber = localTimestampToUtcTimestamp(t);
 };
 
-/** @param element The input type should be `datetime-local` */
-export const setTimestampDateTime = (element: HTMLInputElement, timestamp: number | Date): void => {
-    let t = getTimestampFromDate(timestamp);
+/**
+ * Sets the value of an `input[type="date"]`, `input[type="time"]` or `input[type="datetime-local"]`
+ * element to a date in local time. For `time` and `datetime-local`, the time is rounded down to a
+ * multiple of the `step` attribute (60 seconds by default), so that the value does not cause a step
+ * mismatch. The `min` attribute is not used as the base of the step. If `date` is `null` or
+ * invalid, the value is cleared.
+ *
+ * @throws {TypeError} If the type of the element is not supported.
+ */
+export const setValueAsLocalDate = (
+    element: TimeInputElement,
+    date: Date | number | null,
+): void => {
+    const { type } = element;
 
-    if (Number.isNaN(t)) {
-        element.valueAsNumber = NaN;
-        return;
+    switch (type) {
+        case "date":
+            element.value = date === null ? "" : formatDate(date);
+            break;
+        case "time":
+        case "datetime-local":
+            element.value = date === null ? "" : formatSteppedValue(type, date, element.step);
+            break;
+        default:
+            throw createUnsupportedTypeError(type);
     }
-
-    const step = parseInt(element.step);
-
-    if (!Number.isNaN(step)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-        if (step >= TimeUnit.Minute) {
-            t = Math.trunc(t / MINUTE_IN_MILLISECONDS) * MINUTE_IN_MILLISECONDS;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-        } else if (step >= TimeUnit.Second) {
-            t = Math.trunc(t / SECOND_IN_MILLISECONDS) * SECOND_IN_MILLISECONDS;
-        }
-    }
-
-    element.valueAsNumber = localTimestampToUtcTimestamp(t);
 };
